@@ -5,11 +5,15 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "prepare": "husky"
+    "prepare": "husky install",
+    "semantic-release": "semantic-release",
+    "changelog": "standard-version --skip.tag"
   },
   "keywords": [
     "development",
@@ -25,6 +29,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.1",
     "@typescript-eslint/eslint-plugin": "^8.23.0",
@@ -34,8 +40,11 @@
     "eslint-plugin-prettier": "^5.2.3",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^15.4.3",
     "prettier": "^3.4.2",
+    "semantic-release": "^24.2.1",
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.3"
   }
