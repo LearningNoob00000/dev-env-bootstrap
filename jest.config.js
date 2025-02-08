@@ -14,7 +14,7 @@ module.exports = {
 
     // Handle ES Module dependencies
     transformIgnorePatterns: [
-        'node_modules/(?!(ora)/)'
+        'node_modules/(?!(ora|cli-spinners|eastasianwidth|string-width|strip-ansi|ansi-regex)/)'
     ],
 
     // Test patterns

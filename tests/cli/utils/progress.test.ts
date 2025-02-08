@@ -1,34 +1,34 @@
 // tests/cli/utils/progress.test.ts
 import { ProgressIndicator } from '../../../src/cli/utils/progress';
 
-// Mock ora
-jest.mock('ora', () => {
-  return jest.fn().mockReturnValue({
-    start: jest.fn(),
-    succeed: jest.fn(),
-    fail: jest.fn()
-  });
-});
-
 describe('ProgressIndicator', () => {
   let progress: ProgressIndicator;
+  let consoleLogSpy: jest.SpyInstance;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     progress = new ProgressIndicator();
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
   });
 
-  it('should start spinner with text', () => {
+  afterEach(() => {
+    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should show start message', () => {
     progress.start('Loading...');
-    expect(progress['spinner'].start).toHaveBeenCalledWith('Loading...');
+    expect(consoleLogSpy).toHaveBeenCalledWith('⏳ Loading...');
   });
 
   it('should show success message', () => {
     progress.succeed('Done!');
-    expect(progress['spinner'].succeed).toHaveBeenCalledWith('Done!');
+    expect(consoleLogSpy).toHaveBeenCalledWith('✅ Done!');
   });
 
   it('should show failure message', () => {
     progress.fail('Error!');
-    expect(progress['spinner'].fail).toHaveBeenCalledWith('Error!');
+    expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Error!');
   });
 });

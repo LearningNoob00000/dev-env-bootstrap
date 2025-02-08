@@ -2,6 +2,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { FileSystemUtils } from '../utils/file-system';
+import { EnvironmentAnalyzer, EnvironmentConfig } from './environment-analyzer';
 
 export interface ProjectInfo {
   projectType: 'express' | 'unknown';
@@ -11,19 +12,18 @@ export interface ProjectInfo {
     devDependencies: Record<string, string>;
   };
   projectRoot: string;
+  environment?: EnvironmentConfig;
 }
 
 export class ProjectScanner {
   private fileSystem: FileSystemUtils;
+  private envAnalyzer: EnvironmentAnalyzer;
 
   constructor() {
     this.fileSystem = new FileSystemUtils();
+    this.envAnalyzer = new EnvironmentAnalyzer();
   }
 
-  /**
-   * Scans a directory to detect project type and configuration
-   * @param projectPath - Path to the project root directory
-   */
   public async scan(projectPath: string): Promise<ProjectInfo> {
     const absolutePath = path.resolve(projectPath);
     const hasPackageJson = await this.fileSystem.fileExists(
@@ -36,11 +36,13 @@ export class ProjectScanner {
         hasPackageJson: false,
         dependencies: { dependencies: {}, devDependencies: {} },
         projectRoot: absolutePath,
+        environment: await this.envAnalyzer.analyze(absolutePath)
       };
     }
 
     const packageJson = await this.readPackageJson(absolutePath);
     const isExpress = 'express' in (packageJson.dependencies || {});
+    const envInfo = await this.envAnalyzer.analyze(absolutePath);
 
     return {
       projectType: isExpress ? 'express' : 'unknown',
@@ -50,6 +52,7 @@ export class ProjectScanner {
         devDependencies: packageJson.devDependencies || {},
       },
       projectRoot: absolutePath,
+      environment: envInfo
     };
   }
 

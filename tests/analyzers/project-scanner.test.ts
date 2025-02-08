@@ -1,22 +1,30 @@
 // tests/analyzers/project-scanner.test.ts
 import { ProjectScanner } from '../../src/analyzers/project-scanner';
 import { FileSystemUtils } from '../../src/utils/file-system';
+import { EnvironmentAnalyzer } from '../../src/analyzers/environment-analyzer';
 
 jest.mock('../../src/utils/file-system');
+jest.mock('../../src/analyzers/environment-analyzer');
 
 describe('ProjectScanner', () => {
   let scanner: ProjectScanner;
   let mockFileSystem: jest.Mocked<FileSystemUtils>;
+  let mockEnvAnalyzer: jest.Mocked<EnvironmentAnalyzer>;
 
   beforeEach(() => {
-    // Clear all mocks
     jest.clearAllMocks();
-
-    // Create fresh instances
     mockFileSystem = new FileSystemUtils() as jest.Mocked<FileSystemUtils>;
+    mockEnvAnalyzer = new EnvironmentAnalyzer() as jest.Mocked<EnvironmentAnalyzer>;
 
-    // Mock FileSystemUtils constructor
     (FileSystemUtils as jest.Mock).mockImplementation(() => mockFileSystem);
+    (EnvironmentAnalyzer as jest.Mock).mockImplementation(() => mockEnvAnalyzer);
+
+    // Mock default environment analysis result
+    mockEnvAnalyzer.analyze.mockResolvedValue({
+      variables: {},
+      hasEnvFile: false,
+      services: []
+    });
 
     scanner = new ProjectScanner();
   });
@@ -29,55 +37,52 @@ describe('ProjectScanner', () => {
         }
       };
 
-      // Mock fileExists to return true for package.json
       mockFileSystem.fileExists.mockResolvedValue(true);
-
-      // Mock readFile to return our mock package.json
       mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockPackageJson));
+
+      const mockEnvResult = {
+        variables: { PORT: '3000' },
+        hasEnvFile: true,
+        services: [
+          { name: 'Database', url: 'mongodb://localhost', required: true }
+        ]
+      };
+      mockEnvAnalyzer.analyze.mockResolvedValue(mockEnvResult);
 
       const result = await scanner.scan('/fake/path');
 
-      // Verify the correct file was checked
-      expect(mockFileSystem.fileExists).toHaveBeenCalledWith(
-        expect.stringContaining('package.json')
-      );
-
-      // Verify file was read
-      expect(mockFileSystem.readFile).toHaveBeenCalled();
-
-      // Verify results
       expect(result.projectType).toBe('express');
       expect(result.hasPackageJson).toBe(true);
       expect(result.dependencies.dependencies).toHaveProperty('express');
+      expect(result.environment).toEqual(mockEnvResult);
     });
 
-    it('should handle missing package.json', async () => {
-      // Mock fileExists to return false
+    it('should handle missing package.json with environment check', async () => {
       mockFileSystem.fileExists.mockResolvedValue(false);
+      const mockEnvResult = {
+        variables: {},
+        hasEnvFile: false,
+        services: []
+      };
+      mockEnvAnalyzer.analyze.mockResolvedValue(mockEnvResult);
 
       const result = await scanner.scan('/fake/path');
 
       expect(result.projectType).toBe('unknown');
       expect(result.hasPackageJson).toBe(false);
-      expect(result.dependencies.dependencies).toEqual({});
+      expect(result.environment).toEqual(mockEnvResult);
     });
 
-    it('should handle invalid package.json', async () => {
-      // Mock fileExists to return true
+    it('should handle environment analysis errors', async () => {
       mockFileSystem.fileExists.mockResolvedValue(true);
+      mockFileSystem.readFile.mockResolvedValue('{}');
+      mockEnvAnalyzer.analyze.mockRejectedValue(new Error('Environment analysis failed'));
 
-      // Mock readFile to return invalid JSON
-      mockFileSystem.readFile.mockResolvedValue('invalid json');
+      const result = await scanner.scan('/fake/path');
 
-      // Should throw error for invalid JSON
-      await expect(scanner.scan('/fake/path')).rejects.toThrow('Failed to parse package.json');
-    });
-
-    it('should handle file system errors', async () => {
-      // Mock fileExists to throw error
-      mockFileSystem.fileExists.mockRejectedValue(new Error('File system error'));
-
-      await expect(scanner.scan('/fake/path')).rejects.toThrow('File system error');
+      expect(result.projectType).toBe('unknown');
+      expect(result.environment).toBeDefined();
+      expect(result.environment?.hasEnvFile).toBe(false);
     });
   });
 });

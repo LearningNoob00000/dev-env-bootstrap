@@ -1,7 +1,7 @@
 // src/cli/commands/scan.ts
 import { Command } from 'commander';
 import { ProjectScanner } from '../../analyzers/project-scanner';
-import { ProgressIndicator } from '../../utils/progress';
+import { ProgressIndicator } from '../utils/progress';
 
 export const createScanCommand = (): Command => {
   return new Command('scan')
@@ -22,6 +22,15 @@ export const createScanCommand = (): Command => {
           Object.entries(result.dependencies.dependencies).forEach(([name, version]) => {
             console.log(`- ${name}: ${version}`);
           });
+
+          if (result.environment?.services.length) {
+            console.log('\nRequired Services:');
+            result.environment.services
+              .filter(service => service.required)
+              .forEach(service => {
+                console.log(`- ${service.name}`);
+              });
+          }
         } else {
           console.log('\n❌ Not an Express.js project');
         }
