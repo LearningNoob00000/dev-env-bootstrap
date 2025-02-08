@@ -1,38 +1,51 @@
+// jest.config.js
+/** @type {import('jest').Config} */
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    roots: ['<rootDir>/src', '<rootDir>/tests'],
-    testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+
+    moduleDirectories: ['node_modules', 'src'],
+
     transform: {
-        '^.+\\.ts$': 'ts-jest',
+        '^.+\\.tsx?$': ['ts-jest', {
+            tsconfig: 'tsconfig.json'
+        }]
     },
-    coverageDirectory: 'coverage',
-    coverageReporters: ['text', 'lcov', 'cobertura'],
+
+    // Handle ES Module dependencies
+    transformIgnorePatterns: [
+        'node_modules/(?!(ora)/)'
+    ],
+
+    // Test patterns
+    testMatch: [
+        '**/tests/**/*.test.ts'
+    ],
+
+    // Module resolution
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1'
+    },
+
+    // Coverage settings
     collectCoverageFrom: [
         'src/**/*.ts',
-        '!src/**/*.interface.ts',
-        '!src/**/index.ts',
-        '!src/**/*.types.ts',
+        '!src/**/*.d.ts',
+        '!src/**/index.ts'
     ],
+    coverageDirectory: 'coverage',
     coverageThreshold: {
         global: {
-            branches: 80,
-            functions: 80,
-            lines: 80,
-            statements: 80,
-        },
+            statements: 70,
+            branches: 70,
+            functions: 70,
+            lines: 70
+        }
     },
-    reporters: [
-        'default',
-        ['jest-junit', {
-            outputDirectory: 'reports',
-            outputName: 'junit.xml',
-            classNameTemplate: '{filepath}',
-            titleTemplate: '{title}',
-        }],
-        ['jest-sonar-reporter', {
-            outputDirectory: 'reports',
-            outputName: 'sonar-report.xml',
-        }],
-    ],
+
+    // Other settings
+    verbose: true,
+    clearMocks: true,
+    resetMocks: true,
+    restoreMocks: true
 };

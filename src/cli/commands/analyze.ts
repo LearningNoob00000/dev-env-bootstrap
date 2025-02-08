@@ -1,37 +1,34 @@
 // src/cli/commands/analyze.ts
 import { Command } from 'commander';
-import { EnvAnalyzer } from '../../analyzers/env-analyzer';
-import { FrameworkDetector } from '../../analyzers/framework-detector';
-import { DependencyChecker } from '../../analyzers/dependency-checker';
+import { ProjectScanner } from '../../analyzers/project-scanner';
+import { ProgressIndicator } from '../../utils/progress';
 
 export const createAnalyzeCommand = (): Command => {
   return new Command('analyze')
-    .description('Analyze project dependencies and configuration')
+    .description('Analyze project structure and dependencies')
     .argument('[dir]', 'Project directory', '.')
-    .option('--env', 'Analyze environment files')
-    .option('--deps', 'Check dependencies')
-    .option('--framework', 'Detect frameworks')
+    .option('--json', 'Output results as JSON')
     .action(async (dir, options) => {
+      const progress = new ProgressIndicator();
+      const scanner = new ProjectScanner();
+
       try {
-        if (options.env) {
-          const envAnalyzer = new EnvAnalyzer();
-          const envAnalysis = await envAnalyzer.analyze(dir);
-          console.log('Environment Analysis:', envAnalysis);
-        }
+        progress.start('Analyzing project...');
+        const result = await scanner.scan(dir);
+        progress.succeed('Analysis complete');
 
-        if (options.deps) {
-          const depChecker = new DependencyChecker();
-          const outdated = await depChecker.check(dir);
-          console.log('Outdated Dependencies:', outdated);
-        }
-
-        if (options.framework) {
-          const frameworkDetector = new FrameworkDetector();
-          const frameworks = await frameworkDetector.detect(dir);
-          console.log('Detected Frameworks:', frameworks);
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          console.log('\nProject Analysis:');
+          console.log('-----------------');
+          console.log(`Project Type: ${result.projectType}`);
+          console.log(`Dependencies: ${Object.keys(result.dependencies.dependencies).length}`);
+          console.log(`Dev Dependencies: ${Object.keys(result.dependencies.devDependencies).length}`);
+          console.log(`Project Root: ${result.projectRoot}`);
         }
       } catch (error) {
-        console.error('Analysis failed:', error.message);
+        progress.fail(error instanceof Error ? error.message : 'Analysis failed');
         process.exit(1);
       }
     });

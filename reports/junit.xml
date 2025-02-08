@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="7" failures="2" errors="0" time="2.929">
+  <testsuite name="FileSystemUtils" errors="0" failures="0" skipped="0" timestamp="2025-02-08T15:17:56" time="2.532" tests="4">
+    <testcase classname="tests\utils\file-system.test.ts" name="should read file successfully" time="0.006">
+    </testcase>
+    <testcase classname="tests\utils\file-system.test.ts" name="should handle file not found error" time="0.015">
+    </testcase>
+    <testcase classname="tests\utils\file-system.test.ts" name="should find files matching patterns" time="0.002">
+    </testcase>
+    <testcase classname="tests\utils\file-system.test.ts" name="should ignore specified directories" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProjectScanner" errors="0" failures="2" skipped="0" timestamp="2025-02-08T15:17:56" time="2.635" tests="3">
+    <testcase classname="tests\analyzers\project-scanner.test.ts" name="should detect Express.js project" time="0.007">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;express&quot;
+Received: &quot;unknown&quot;
+    at Object.&lt;anonymous&gt; (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\tests\analyzers\project-scanner.test.ts:29:34)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)</failure>
+    </testcase>
+    <testcase classname="tests\analyzers\project-scanner.test.ts" name="should handle missing package.json" time="0.001">
+    </testcase>
+    <testcase classname="tests\analyzers\project-scanner.test.ts" name="should handle invalid package.json" time="0.001">
+      <failure>Error: expect(received).rejects.toThrow()
+
+Received promise resolved instead of rejected
+Resolved to value: {&quot;dependencies&quot;: {&quot;dependencies&quot;: {}, &quot;devDependencies&quot;: {}}, &quot;hasPackageJson&quot;: false, &quot;projectRoot&quot;: &quot;C:\\fake\\path&quot;, &quot;projectType&quot;: &quot;unknown&quot;}
+    at expect (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\expect\build\index.js:113:15)
+    at Object.&lt;anonymous&gt; (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\tests\analyzers\project-scanner.test.ts:47:13)
+    at Promise.then.completed (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\utils.js:231:10)
+    at _callCircusTest (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:252:3)
+    at _runTestsForDescribeBlock (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:126:9)
+    at _runTestsForDescribeBlock (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:121:9)
+    at _runTestsForDescribeBlock (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:121:9)
+    at run (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\run.js:71:3)
+    at runAndTransformResultsToJestFormat (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+    at jestAdapter (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+    at runTestInternal (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-runner\build\runTest.js:367:16)
+    at runTest (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-runner\build\runTest.js:444:34)
+    at Object.worker (C:\Users\Ism\Desktop\MicroServices\dev-env-bootstrap\node_modules\jest-runner\build\testWorker.js:106:12)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
