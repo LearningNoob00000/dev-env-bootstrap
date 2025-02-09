@@ -30,19 +30,31 @@ export class ProjectScanner {
       path.join(absolutePath, 'package.json')
     );
 
+    let envInfo: EnvironmentConfig = {
+      variables: {},
+      hasEnvFile: false,
+      services: []
+    };
+
+    try {
+      envInfo = await this.envAnalyzer.analyze(absolutePath);
+    } catch (error) {
+      // Provide default environment config on error
+      console.error('Environment analysis failed:', error);
+    }
+
     if (!hasPackageJson) {
       return {
         projectType: 'unknown',
         hasPackageJson: false,
         dependencies: { dependencies: {}, devDependencies: {} },
         projectRoot: absolutePath,
-        environment: await this.envAnalyzer.analyze(absolutePath)
+        environment: envInfo
       };
     }
 
     const packageJson = await this.readPackageJson(absolutePath);
     const isExpress = 'express' in (packageJson.dependencies || {});
-    const envInfo = await this.envAnalyzer.analyze(absolutePath);
 
     return {
       projectType: isExpress ? 'express' : 'unknown',

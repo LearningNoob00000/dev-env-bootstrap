@@ -78,11 +78,21 @@ describe('ProjectScanner', () => {
       mockFileSystem.readFile.mockResolvedValue('{}');
       mockEnvAnalyzer.analyze.mockRejectedValue(new Error('Environment analysis failed'));
 
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
       const result = await scanner.scan('/fake/path');
 
-      expect(result.projectType).toBe('unknown');
-      expect(result.environment).toBeDefined();
-      expect(result.environment?.hasEnvFile).toBe(false);
+      expect(result.environment).toEqual({
+        variables: {},
+        hasEnvFile: false,
+        services: []
+      });
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Environment analysis failed:',
+        expect.any(Error)
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 });
