@@ -1,5 +1,6 @@
-import { join } from 'path';
+// scripts/build.ts
 import { promises as fs } from 'fs';
+import { join } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
@@ -13,19 +14,25 @@ async function buildBinaries() {
   // Ensure output directory exists
   await fs.mkdir(outDir, { recursive: true });
 
-  const entry = join(__dirname, '../dist/cli/index.js');
-  const output = join(outDir, `deb-v${version}`);
+  const builds = [
+    { name: 'windows', ext: '.exe' },
+    { name: 'macos', ext: '' },
+    { name: 'linux', ext: '' }
+  ];
 
   try {
-    console.log('Building binaries with caxa...');
+    console.log('Building binaries...');
 
-    // caxa requires a different command structure
-    const command = `npx caxa ${entry} --output ${output} -- ${entry}`;
+    for (const build of builds) {
+      const outFile = `deb-v${version}-${build.name}${build.ext}`;
+      const command = `npx caxa --input "." --output "${join(outDir, outFile)}" -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/dist/cli/index.js"`;
 
-    const { stdout, stderr } = await execAsync(command);
+      console.log(`Building for ${build.name}...`);
+      const { stdout, stderr } = await execAsync(command);
 
-    if (stdout) console.log(stdout);
-    if (stderr) console.error(stderr);
+      if (stdout) console.log(stdout);
+      if (stderr) console.error(stderr);
+    }
 
     console.log('Build complete!');
   } catch (error) {

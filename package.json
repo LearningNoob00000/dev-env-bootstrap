@@ -17,8 +17,9 @@
   "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
   "benchmark:ci": "ts-node --expose-gc scripts/benchmark.ts > benchmark-results.txt",
   "build": "tsc && node scripts/build.ts",
-  "build:bin": "npx caxa dist/cli/index.js --output dist/bin/deb-$(node -p 'require(\"./package.json\").version') -- dist/cli/index.js"
-},
+  "build:binaries": "ts-node scripts/build.ts",
+  "postbuild:binaries": "chmod +x dist/bin/deb-*-linux dist/bin/deb-*-macos"
+  },
   "keywords": [
     "development",
     "environment",
