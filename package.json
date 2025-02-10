@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "prepare": "husky install",
+    "prepare": "npx husky",
     "semantic-release": "semantic-release",
     "changelog": "standard-version --skip.tag",
      "benchmark": "ts-node --expose-gc scripts/benchmark.ts",
