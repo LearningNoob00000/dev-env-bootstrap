@@ -1,4 +1,3 @@
-// scripts/build.ts
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { exec } from 'child_process';
@@ -14,25 +13,14 @@ async function buildBinaries() {
   // Ensure output directory exists
   await fs.mkdir(outDir, { recursive: true });
 
-  const targets = [
-    'node18-linux-x64',
-    'node18-macos-x64',
-    'node18-win-x64',
-    'node18-linux-arm64',
-    'node18-macos-arm64'
-  ];
-
-  const config = {
-    targets,
-    outDir,
-    entry: join(__dirname, '../dist/cli/index.js'),
-    name: `deb-v${version}`
-  };
+  const entry = join(__dirname, '../dist/cli/index.js');
+  const output = join(outDir, `deb-v${version}`);
 
   try {
-    console.log('Building binaries...');
-    const targetString = targets.join(',');
-    const command = `pkg ${config.entry} --targets ${targetString} --output ${join(config.outDir, config.name)}`;
+    console.log('Building binaries with caxa...');
+
+    // caxa requires a different command structure
+    const command = `npx caxa ${entry} --output ${output} -- ${entry}`;
 
     const { stdout, stderr } = await execAsync(command);
 
