@@ -1,6 +1,6 @@
 // src/cli/utils/config-manager.ts
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import inquirer from 'inquirer';
-import { promises as fs } from 'fs';
 import path from 'path';
 import { FileSystemUtils } from '../../utils/file-system';
 

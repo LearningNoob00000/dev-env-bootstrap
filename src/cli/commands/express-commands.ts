@@ -7,7 +7,6 @@ import path from 'path';
 import { ProjectScanner } from '../../analyzers/project-scanner';
 import { ConfigManager, DockerConfig } from '../utils/config-manager';
 import { ConfigValidators } from '../utils/validators';
-import { ErrorMessages } from '../utils/error-messages';
 
 export function createExpressCommands(): Command[] {
   const analyzer = new ExpressAnalyzer();
@@ -49,7 +48,7 @@ export function createExpressCommands(): Command[] {
     .action(async (dir, options) => {
       try {
         // Load or create configuration
-        let config: DockerConfig = options.interactive
+        const config: DockerConfig = options.interactive
           ? await configManager.loadConfig(dir).then(existing =>
             configManager.promptConfig(existing || undefined)
           )

@@ -1,7 +1,5 @@
 // src/cli/index.ts
 import { Command } from 'commander';
-import { createScanCommand } from './commands/scan';
-import { createAnalyzeCommand } from './commands/analyze';
 import { createExpressCommands } from './commands/express-commands';
 
 export const createCLI = (): Command => {

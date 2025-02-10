@@ -1,4 +1,5 @@
 // src/utils/file-system.ts
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { promises as fs } from 'fs';
 import path from 'path';
 

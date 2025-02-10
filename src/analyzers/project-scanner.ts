@@ -1,5 +1,6 @@
 // src/analyzers/project-scanner.ts
-import { promises as fs } from 'fs';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import path from 'path';
 import { FileSystemUtils } from '../utils/file-system';
 import { EnvironmentAnalyzer, EnvironmentConfig } from './environment-analyzer';

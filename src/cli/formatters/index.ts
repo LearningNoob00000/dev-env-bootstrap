@@ -1,4 +1,5 @@
 // src/cli / formatters / index.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Table from 'cli-table3';
 
 export interface OutputFormatter {

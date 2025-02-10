@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { performance } from 'perf_hooks';
+
 
 export interface BenchmarkResult {
   name: string;

@@ -29,7 +29,6 @@ async function buildBinaries(): Promise<void> {
     console.log('Building binaries...');
 
     for (const build of builds) {
-      // Skip builds for non-matching platforms unless explicitly set to build all
       if (!process.env.BUILD_ALL && process.platform !== build.platform) {
         console.log(`Skipping ${build.name} build on ${process.platform}...`);
         continue;
